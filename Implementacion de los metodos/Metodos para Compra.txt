@@ -1,0 +1,2 @@
+calcularTotal(): float
+    retorna producto.getPrecioBase() * cantProd

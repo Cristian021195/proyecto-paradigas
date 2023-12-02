@@ -1,0 +1,132 @@
+crearAmenitie(codigo:string, nombre:string, descripcion:string, precioReserva:float)
+   amenitie <- new Amenitie(codigo, nombre, descripcion, precioReserva)
+   amenities.push_back(amenitie)
+
+crearHabitacion(nroHab:int, nombrePopular:string, tamanio:float, capacidad:int, nroCamas:int, precioPorNoche:float)
+   habitacion <- new Habitacion(nroHabitacion, nombrePopular, tamanio, capacidad, nroCamas, precioPorNoche)
+   habitaciones.push_back(habitacion)
+
+crearProductoBar(codigo:string, nombre:string, descripcion:string, precioBase:float)
+   productoBar <- new ProductoBar(codigo, nombre, descripcion, precioBase)
+   productos.push_back(productoBar)
+
+
+crearReservaHab(titular:Cliente, fechaEntrada:Fecha, fechaSalida:Fecha, nroCamas:int, capacidad:int, 
+                    tamanio:float,seniaMin:float):void
+   hab <- buscarHabDisponible(fechaEntrada, fechaSalida, nroCamas, capacidad, tamanio)
+    SI (hab IS NOT NULL) ENTONCES
+            SI (seniaMin >= 0.3*hab.costoTotalReserva(fechaEntrada, fechaSalida)) ENTONCES
+                reserva <- new ReservaHabitacion(titular, hab, fechaEntrada, fechaSalida, seniaMin)
+                reservasHabitaciones.push_back(reserva)
+                hab.agregarReserva(reserva)
+                ESCRIBIR("Se ha realizado la reserva correctamente")
+            SINO
+                ESCRIBIR("No se pudo realizar la reserva porque no se deposito la seña minima esperada")
+    SINO
+            ESCRIBIR("No se pudo realizar la reserva porque no se encuentra disponible la habitacion")
+
+
+
+buscarHabDisponible(fechaEntrada:Fecha, fechaSalida:Fecha, nroCamas:int, capacidad:int, tamanio:float): Habitacion
+    SI (nroCamas > 0 && capacidad > 0 && tamanio > 0) ENTONCES
+        Para cada hab en habitaciones
+          SI(nroCamas = hab.getNroCamas() && capacidad = hab.getCapacidad() && tamanio = hab.getTamanio()) ENTONCES
+            SI (hab.hayDisponibilidad(fechaE, fechaS) = Libre) ENTONCES
+                retorna hab
+            FIN_SI
+          FIN_SI        
+        FIN_Para
+    FIN_SI
+    retorna null
+       
+       
+
+crearReservaAme(nroHab:int, identHuesped:string, nombreAmenity, fechaReserva:Fecha, horaReserva:Hora):string
+   existeAmenityDisponible <- false
+   existeReservaHabActiva <- false
+   Para cada res en reservasHabitaciones
+      SI (res.getHabitacion().getNroHab() = nroHab && (res.verificarTitular(identHuesped) || res.verificarAcompanante(identHuesped))) ENTONCES
+          SI (res.getFechaIn() != null && res.getFechaOut() = null && fechaReserva >= res.getFechaIn()) ENTONCES
+                existeReservaHabActiva <- true
+                Para cada ame en amenities
+                   SI (ame.getNombre() = nombreAmenity && ame.hayDisponibilidad(fechaReserva, horaReserva)) ENTONCES
+                       existeAmenityDisponible <- true
+                       reservaAme <- ame.crearReservaAmenity(ame, res.getHabitacion().getNroHab(),identHuesped,fechaReserva,horaReserva)
+                       res.agregarReservaAmenity(reservaAme)
+                       ESCRIBIR("Se ha realizado la reserva correctamente")
+                       break
+                   FIN_SI
+                FIN_Para
+          FIN_SI
+      FIN_SI
+   FIN_Para
+   
+   SI (!existeReservaHabActiva || !existeAmenityDisponible) ENTONCES
+      ESCRIBIR("No existe reserva activa, o amenity disponible")
+   SINO
+      ESCRIBIR("Reserva activa OK!, amenity disponible OK!")
+   FIN_SI
+
+
+
+crearCompra(nroHabitacion:int, codProd:string, cantProd:int, fechaCompra:Fecha):void
+  existeReservaHab <- false
+  Para cada res en reservasHabitaciones
+    SI (res.getHabitacion().getNro() = nroHab) ENTONCES
+       SI (res.getFechaIn() != null && res.getFechaOut() = null) ENTONCES
+          existeReservaHab <- true
+          Para cada prod en productos
+            SI (prod.getCodProd() = codProd) ENTONCES
+                res.crearCompra(prod, cantProd, fechaCompra)
+                existeProd <- true
+                break
+            FIN_SI
+          FIN_PARA    
+       FIN_SI
+    FIN_SI
+  FIN_Para
+  
+  SI(!existeReservaHab || !existeProd) ENTONCES
+    ESCRIBIR("Sin reserva o sin producto")
+  SINO
+    ESCRIBIR("Reserva OK!, producto adquirido!")
+  
+  
+
+checkIn(nroHabitacion:int, identTitular:string, fechaLlegada:Fecha, horaLlegada:Hora, acompanantes:Lista de Clientes):void
+  existeReservaActiva <- false
+  SI (horaLlegada >= 13:00) ENTONCES
+       Para cada res en reservasHabitaciones
+        SI (res.getHabitacion().getNroHab() = nroHab && res.getTitular().getIdentificacion() = identTitular) ENTONCES
+          SI (res.getFechaEntrada() >= fechaLlegada && res.getFechaSalida() >= fechaLlegada  && res.getFechaIn() = null) ENTONCES
+              existeReservaActiva <- true
+              res.checkIn(fechaLlegada, horaLlegada, acompanantes)
+              BREAK
+          FIN_SI
+        FIN_SI 
+       FIN_Para
+  FIN_SI
+  
+  SI (!existeReservaActiva)ENTONCES
+    ESCRIBIR("No se puede hacer el checkIn")
+  SINO
+     ESCRIBIR("Checkin exitoso")
+  FIN_SI
+    
+
+checkOut(nroHab:int,identTitular, fechaOut:Fecha, horaOut:Hora):void
+  existeReservaActiva <- false
+  Para cada res en reservasHabitaciones
+    SI (res.getHabitacion().getNro() = nroHab && res.getTitular().getIdentificacion() = identTitular) ENTONCES
+      SI (res.getFechaIn() != null && res.getFechaOut() = null) ENTONCES
+           existeReservaActiva <- true
+           res.checkOut(fechaOut, horaOut)
+           BREAK
+      FIN_SI
+    FIN_SI
+  FIN_Para
+  
+  SI(!existeReservaActiva)ENTONCES
+    ESCRIBIR("No se puede hacer el checkout de una habitacion sin reserva")
+  ELSE
+    ESCRIBIR("Check Out exitoso")

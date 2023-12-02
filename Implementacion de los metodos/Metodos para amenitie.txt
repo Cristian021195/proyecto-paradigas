@@ -1,0 +1,26 @@
+crearReservaAmenity(ame:Amenity, nroHab:int, identHuesped:string, fechaReserva:Fecha, horaReserva:Hora):ReservaAmenity
+  reserva <- new ReservaAmenity(ame, nroHab, identHuesped, fechaReserva, horaReserva)
+  reservas.push_back(reserva)
+  retorna reserva
+
+hayDisponibilidad(fechaReserva:Fecha, horaReserva:Hora):bool
+    existeReserva <- false
+    Para cada res en reservas
+       fechaA <- res.GetFechaReservada()
+       horaA <- res.GetHoraReservada()
+       SI (fechaReserva = fechaA) ENTONCES
+           existeReserva <- true
+           SI (NOT(horaReserva >= horaA && horaA + 1 >= horaReserva)) ENTONCES
+              retorna true
+           SINO
+              retorna false
+           FIN_SI
+       FIN_SI
+    FIN_Para
+ 
+    SI (!existeReserva) ENTONCES retorna true
+    SINO retorna false
+    
+listarInfo():void
+ ESCRIBIR(nombre, descripcion, precioBase)
+ 

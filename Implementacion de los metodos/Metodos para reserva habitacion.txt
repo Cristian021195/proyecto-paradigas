@@ -1,0 +1,56 @@
+verificarTitular(identHuesped: string): bool
+    SI (idenHuesped = titular.getIdentificacion()) ENTONCES
+    	retorna true
+    FIN_SI
+    retorna false
+
+
+verificarAcompanante(idenHuesped: string): bool
+	Para cada a en acompanantes
+		SI (identHuesped = a.getIdentificacion()) ENTONCES
+			retorna true
+		FIN_SI
+	retorna false
+
+
+agregarReservaAmenity(reserva:ReservaAmenity):void
+   consumo.agregarReservaAmenity(reserva)
+   
+
+crearCompra(prod:ProductoAlimenticio, cantProd:int, fechaCompra:Fecha):void
+  consumo.crearCompra(prod, cantProd, fechaCompra)
+  
+  
+checkIn(fechaIn:Fecha, horaIn:Hora, acompanantes:Lista de clientes):void
+   this.fechaIn <- fechaIn
+   this.horaIn <- horaIn
+   this.acompanantes <- acompanantes
+   
+   
+checkOut(fechaOut:Fecha, horaOut:Hora):void
+   this.fechaOut <- fechaOut
+   this.horaOut <- horaOut
+   mostrarPagoTotal()
+   
+
+mostrarPagoTotal():void
+  pagoTotalReserva <- habitacion.costoTotalReserva(fechaEntrada, fechaSalida)
+  pagoRestante <- pagoTotalReserva - seniaMin
+  penalizacion <- calcularPenalizacion(horaOut)
+  consumo.imprimirFacturaConsumo()
+  ESCRIBIR(seniaMin, pagoRestante, pagoTotalReserva)
+  ESCRIBIR("Penalizacion por incumplimiento: ", penalizacion)
+  ESCRIBIR("TOTAL: ", pagoRestante + consumo.calcularConsumos() + penalizacion
+  
+  
+calcularPenalizacion(horaOut:Hora):float
+  SI(horaOut <= 11:00) ENTONCES
+     retorna 0
+  SINO
+    SI (11:00 < horaOut && horaOut <= 13:00 ) ENTONCES
+       retorna habitacion.getPrecioPorNoche() / 2
+    SINO
+       retorna habitacion.getPrecioPorNoche()
+   
+
+

@@ -1,0 +1,2 @@
+listarInfo(): void
+	ESCRIBIR (Nombre, Descripcion, Precio base) 

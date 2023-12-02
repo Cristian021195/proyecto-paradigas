@@ -1,0 +1,44 @@
+agregarReservaAmenity(reserva: ReservaAmenity): void
+    reservasAmenities.push_back(reserva)
+
+
+crerCompra(prod:ProductoBar, cantProd:int, fechaCompra:Fecha): void
+    compra <- new Compra(prod:Prod, cantProd:int, fechaCompra:Fecha)
+    compras.push_back(compra)
+
+
+imprimirComprasRealizadas(): void
+   costoCompras <- 0
+   Para cada compra en compras
+        compra.listarInfo()
+        costoCompras <- costoCompras + compra.calcularTotal()
+   FIN_Para
+   ESCRIBIR "SUBTOTAL---" + costoCompras
+
+   
+
+imprimirReservasAmenities():void
+    costoReservas <- 0
+    Para cada reserva en reservasAmenities
+        costoReservas <- costoReservas + reserva.getAmenity().getPrecioBase()
+        reserva.listaInfo()
+    FIN_Para
+    ESCRIBIR "SUBTOTAL---" + costoReservas
+    
+
+imprimirFacturaConsumo():void
+    imprimirComprasRealizadas()
+    imprimirReservasAmenities()
+    "TOTAL CONSUMO-----"+ calcularConsumos()
+    
+    
+calcularConsumos():float    
+    costoConsumo <- 0   
+    Para cada compra en compras
+        costoConsumo <- costoConsumo + compra.calcularTotal()   
+    FIN_Para
+    Para cada reserva en reservasAmenities
+        costoConsumo <- costoConsumo + reserva.getAmenity().getPrecioBase()
+    FIN_Para
+    RETURN costoConsumo
+    

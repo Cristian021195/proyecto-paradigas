@@ -1,0 +1,36 @@
+hayDisponibilidad(fechaEntrada:Fecha, fechaSalida:Fecha):tipoEstado
+   i <- 0
+   MIENTRAS (i < reservas.size())
+     fechaRegEntrada <- reservas[i].getFechaEntrada()
+     fechaRegSalida <- reservas[i].GetFechaSalida()
+     SI ((fechaRegEntrada <= fechaEntrada && fechaEntrada <= fechaRegSalida) || (fechaRegEntrada <= fechaSalida && fechaSalida <= fechaRegSalida) || (fechaEntrada <= fechaRegEntrada &&                                                     fechaSalida >= fechaRegSalida)) ENTONCES
+         SI (reservas[i].getFechaIn() = null) ENTONCES
+           retorna tipoEstado.Reservada
+         SINO
+           SI (reservas[i].getFechaOut() = null) ENTONCES
+              retorna tipoEstado.Ocupada
+           FIN_SI
+         FIN_SI
+     FIN_SI
+     i <- i + 1
+   FIN_MIENTRAS
+   
+   retorna tipoEstado.Libre
+   
+   
+   
+costoTotalReserva(fechaE:Fecha, fechaS:Fecha):float
+    cant <- Fecha.diferenciaDias(fechaE, fechaS)
+    costo <- cant*precioPorNoche
+    costo <- costo*1.5 //Se hace este incremento cubriendo los costos por las caracteristicas de la habitacion
+
+    retorna costo
+
+
+
+agregarReserva(reserva: ReservaHabitacion): void
+    reservas.push_back(reserva);
+    
+
+
+
